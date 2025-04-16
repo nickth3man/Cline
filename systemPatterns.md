@@ -1,0 +1,52 @@
+# System Patterns
+
+## System Architecture
+
+- The workflow is organized around per-video folders, each named after the video title.
+- All processing (audio download, transcription, sentence splitting, LLM correction/summarization, diarization) is performed in-place within each video folder.
+- Transcription is always performed using the official OpenAI Whisper API (`whisper-1`) with `OPENAI_API_KEY` (not via OpenRouter, due to lack of endpoint).
+- Sentence splitting and cleanup is always performed using SpaCy.
+- LLM correction and summarization are performed using a user-selected OpenRouter LLM, with live dropdowns, search/filter, model variants, provider routing, model details, and robust error handling.
+- Diarization is performed locally using `pyannote.audio`.
+- Output includes audio, raw transcript, LLM-labeled transcript, summary, metadata (CSV/JSON), and HTML transcript reader.
+- UI provides advanced model selection for LLM steps, real-time cost display, error feedback, and extensibility for future features.
+
+## Key Technical Decisions
+
+- Use yt-dlp or similar for robust audio download.
+- Use OpenRouter Whisper for all transcription (fixed model).
+- Use SpaCy for all sentence splitting and cleanup (required).
+- Fetch all available OpenRouter LLMs live for user selection in correction and summarization steps, with advanced selection (search, variants, provider routing, model details).
+- Calculate and display estimated cost for LLM steps in real time.
+- Use pyannote.audio locally for diarization, with setup checks and error handling.
+- Organize all outputs per video for clarity and scalability.
+- Surface all errors (API, network, cache, model selection) in the GUI, not just logs.
+
+## Design Patterns in Use
+
+- **Per-entity grouping (Filesystem):** All assets for a single video are colocated in a folder.
+- **Centralized Index (Database):** (If used) A SQLite database can act as the primary index and data store for metadata and text content.
+- **Live Model Fetching & Advanced Selection:** LLM dropdowns are populated live from OpenRouter’s model list, support search/filter, variants, provider routing, and show model details.
+- **Streaming Export:** Export logic (if present) is designed to handle large datasets efficiently.
+- **Robust Error Handling:** Errors are logged per video, surfaced in the GUI, and the pipeline continues processing other videos.
+
+## Component Relationships
+
+- **Audio Download:** yt-dlp or similar downloads audio to per-video folders.
+- **Transcription:** Fixed to OpenRouter Whisper; no user selection.
+- **Sentence Splitting:** Fixed to SpaCy; no user selection.
+- **LLM Correction/Summarization:** User selects any OpenRouter LLM from a live dropdown; UI shows real-time price, supports advanced selection, and surfaces errors.
+- **Diarization:** Always performed using pyannote.audio locally; setup instructions and checks provided.
+- **Output:** All results are saved per video, with clear naming and structure.
+- **UI:** Provides live model selection, advanced features, and cost feedback for LLM steps, with robust error handling and user feedback.
+
+## Critical Implementation Paths
+
+- For each video:
+  - Download audio.
+  - Transcribe audio using OpenRouter Whisper.
+  - Split sentences and clean up using SpaCy.
+  - User selects LLM for correction and summarization; UI shows live price, advanced selection, and model details.
+  - Run pyannote.audio diarization locally.
+  - Save all outputs (audio, transcripts, summary, metadata, diarization, HTML reader) in the video’s folder.
+  - Log errors and progress per video, and surface all errors in the GUI.

@@ -1,0 +1,1119 @@
+{
+  "version": "6.0",
+  "nxVersion": "20.7.2",
+  "pathMappings": {},
+  "nxJsonPlugins": [],
+  "fileMap": {
+    "nonProjectFiles": [
+      {
+        "file": "MCP/sequentialthinking-tmp/CONTRIBUTING.md",
+        "hash": "12293533271168214961"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/postgres/tsconfig.json",
+        "hash": "14748180312178446792"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/.gitattributes",
+        "hash": "958711005972166897"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/everything/tsconfig.json",
+        "hash": "14748180312178446792"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sqlite/uv.lock",
+        "hash": "11196605394778496090"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/postgres/package.json",
+        "hash": "2863717300159039205"
+      },
+      {
+        "file": "yt_pipeline_output/audio/014-Google has COOKED once more! Firebase Studio, Agent Space, & More!.mp4",
+        "hash": "10987015752719158542"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/fetch/pyproject.toml",
+        "hash": "7353290732420410198"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/filesystem/tsconfig.json",
+        "hash": "4677235575249455327"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/bin/ffprobe.exe",
+        "hash": "6475314682164302198"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/fetch/uv.lock",
+        "hash": "11119998221060254143"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/agent/custom_agent.py",
+        "hash": "3674974637770597343"
+      },
+      {
+        "file": "memory-bank/productContext.md",
+        "hash": "1568188106202837633"
+      },
+      {
+        "file": "memory-bank/techContext.md",
+        "hash": "12780334944206046083"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/browser/custom_context.py",
+        "hash": "6170926814721233230"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/common/errors.ts",
+        "hash": "292435078372245762"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sequentialthinking/Dockerfile",
+        "hash": "5513909594333937269"
+      },
+      {
+        "file": "yt_pipeline_output/audio/008-NBA's DARKEST Moments Explained In 25 Minutes.mp4",
+        "hash": "18309975450873207254"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sequentialthinking/package.json",
+        "hash": "13062622091258649716"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/puppeteer/package.json",
+        "hash": "17084384991489418942"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/gitlab/index.ts",
+        "hash": "4125696759314476599"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/memory/index.ts",
+        "hash": "1588929454021730715"
+      },
+      {
+        "file": "yt_pipeline_output/audio/004-Every NBA ERA Explained In 31 Minutes.mp4",
+        "hash": "7203686620562770571"
+      },
+      {
+        "file": "MCP/sequentialthinking/src/sequentialthinking/package.json",
+        "hash": "13062622091258649716"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/libavformat.html",
+        "hash": "9669938391317952014"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/libswscale.html",
+        "hash": "8462889239469544378"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/developer.html",
+        "hash": "17053532307688210776"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/slack/package.json",
+        "hash": "7216118015791001951"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/LICENSE",
+        "hash": "6759137170299156332"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/browser/custom_browser.py",
+        "hash": "403707646972885190"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/index.ts",
+        "hash": "6579603167597489430"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/time/.python-version",
+        "hash": "15650782136117618141"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/puppeteer/README.md",
+        "hash": "7586194726716009873"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/LICENSE",
+        "hash": "5004495261018704297"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/memory/tsconfig.json",
+        "hash": "3994252324102726545"
+      },
+      {
+        "file": "memory-bank/transcription-workflow/productContext.md",
+        "hash": "9656461872069644819"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/tsconfig.json",
+        "hash": "3947895709161423017"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/faq.html",
+        "hash": "3019483967021294571"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sequentialthinking/index.ts",
+        "hash": "7093237881053521591"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/CODE_OF_CONDUCT.md",
+        "hash": "17217423898828430270"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/git/.gitignore",
+        "hash": "12884338306603000279"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sentry/src/mcp_server_sentry/server.py",
+        "hash": "16048555385336416596"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/memory/package.json",
+        "hash": "13917763598077739533"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/community.html",
+        "hash": "8228378830237690236"
+      },
+      {
+        "file": "MCP/sequentialthinking/tsconfig.json",
+        "hash": "3947895709161423017"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/gitlab/package.json",
+        "hash": "5605172228934049111"
+      },
+      {
+        "file": "memory-bank/transcription-workflow/systemPatterns.md",
+        "hash": "2559594117775044679"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/git/Dockerfile",
+        "hash": "9014043673091219030"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/platform.html",
+        "hash": "6729456442603925072"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sentry/src/mcp_server_sentry/__init__.py",
+        "hash": "9217587487112082088"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/controller/custom_controller.py",
+        "hash": "6899124044078665402"
+      },
+      {
+        "file": "yt_pipeline_output/audio/009-Every NBA Team's WEAKNESS Explained in 28 Minutes.mp4",
+        "hash": "6454698277888890969"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sqlite/src/mcp_server_sqlite/server.py",
+        "hash": "12620228692202026599"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/time/uv.lock",
+        "hash": "4543159747956342151"
+      },
+      {
+        "file": "src/workflow_logic.py",
+        "hash": "10862125530320435816"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/time/test/time_server_test.py",
+        "hash": "10326505463912021072"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/brave-search/tsconfig.json",
+        "hash": "5753904900206282512"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/fetch/Dockerfile",
+        "hash": "3712171051506418201"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/Dockerfile",
+        "hash": "4854264488153938895"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffmpeg-utils.html",
+        "hash": "16942907560898891284"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/.github/workflows/version-check.yml",
+        "hash": "7618082405574647685"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/aws-kb-retrieval-server/index.ts",
+        "hash": "2557410599258002045"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/server.py",
+        "hash": "12267587488748800148"
+      },
+      {
+        "file": "yt_pipeline_output/audio/013-Opening Keynote： The new way to cloud.mp4",
+        "hash": "3784924449335924731"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/gdrive/tsconfig.json",
+        "hash": "14748180312178446792"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/presets/libvpx-360p.ffpreset",
+        "hash": "13278492862310563635"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/everart/tsconfig.json",
+        "hash": "14748180312178446792"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/everything/CLAUDE.md",
+        "hash": "16416602377842018998"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffmpeg-all.html",
+        "hash": "2953042538873646120"
+      },
+      {
+        "file": "yt_pipeline_output/audio/003-Every NBA THEORY Explained In 32 Minutes.mp4",
+        "hash": "14677978153485925533"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/everart/package.json",
+        "hash": "8276791109012294961"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/utils/llm.py",
+        "hash": "16782720182782878427"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/slack/Dockerfile",
+        "hash": "13104388537903874287"
+      },
+      {
+        "file": "MCP/sequentialthinking/src/sequentialthinking/tsconfig.json",
+        "hash": "6564947716650043416"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffplay.html",
+        "hash": "9345610331820527404"
+      },
+      {
+        "file": "yt_pipeline_output/audio/018-Build a ChatGPT Style App for Your n8n AI Agents in MINUTES.mp4",
+        "hash": "4707966370156551595"
+      },
+      {
+        "file": "MCP/browser-use/uv.lock",
+        "hash": "7781114218783645980"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sentry/README.md",
+        "hash": "1668045284546648322"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/redis/tsconfig.json",
+        "hash": "18200671642627004649"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/gitlab/README.md",
+        "hash": "3596351167986752970"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sqlite/README.md",
+        "hash": "7307340965428626124"
+      },
+      {
+        "file": "memory-bank/transcription-workflow/progress.md",
+        "hash": "5957776146734429574"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/utils/deep_research.py",
+        "hash": "4584726586525622313"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/time/README.md",
+        "hash": "4747581877821970073"
+      },
+      {
+        "file": "MCP/browser-use/CLAUDE.md",
+        "hash": "17708742893005706879"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffmpeg-filters.html",
+        "hash": "6087630981324317179"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/everart/index.ts",
+        "hash": "12365493235871534754"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/package.json",
+        "hash": "5991412192917268091"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sqlite/Dockerfile",
+        "hash": "5705100611701809566"
+      },
+      {
+        "file": "memory-bank/transcription-workflow/techContext.md",
+        "hash": "11367711946049580648"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/presets/libvpx-720p50_60.ffpreset",
+        "hash": "250966735373159298"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffmpeg.html",
+        "hash": "12953199302223012825"
+      },
+      {
+        "file": "yt_pipeline_output/audio/007-Every NBA Player's WEAKNESS Explained in 31 Minutes.mp4",
+        "hash": "1026294364397756368"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/git/uv.lock",
+        "hash": "8909097183500772895"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/git/README.md",
+        "hash": "13081214533020716669"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/operations/issues.ts",
+        "hash": "6663483152650368503"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffmpeg-devices.html",
+        "hash": "13726429927916493596"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/gdrive/index.ts",
+        "hash": "8882021573517233887"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/time/src/mcp_server_time/__main__.py",
+        "hash": "12203170045184071584"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/everart/Dockerfile",
+        "hash": "8183072519249142505"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/everything/package.json",
+        "hash": "4949130646675616418"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffplay-all.html",
+        "hash": "2752929216373803696"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/.npmrc",
+        "hash": "405812280612760497"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffmpeg-formats.html",
+        "hash": "15845627136467864329"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/puppeteer/index.ts",
+        "hash": "7595836579902260572"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/fetch/.python-version",
+        "hash": "14879863621776397444"
+      },
+      {
+        "file": "MCP/browser-use/.pre-commit-config.yaml",
+        "hash": "8132792470993411626"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/time/src/mcp_server_time/__init__.py",
+        "hash": "9518031091741220913"
+      },
+      {
+        "file": "REFACTOR_PLAN.md",
+        "hash": "6124059143249572513"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/agent/__init__.py",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/package.json",
+        "hash": "16948858870756161471"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/aws-kb-retrieval-server/README.md",
+        "hash": "9938449338520015046"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/google-maps/package.json",
+        "hash": "8996895276685335231"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/aws-kb-retrieval-server/package.json",
+        "hash": "14811692836503308264"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/brave-search/package.json",
+        "hash": "9173009027772616591"
+      },
+      {
+        "file": "yt_pipeline_output/audio/010-Every NBA Record You Don't Want to Break Explained in 28 Minutes.mp4",
+        "hash": "14455762866630527908"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/general.html",
+        "hash": "15229906733113969021"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/libavdevice.html",
+        "hash": "4586514935693450540"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/puppeteer/tsconfig.json",
+        "hash": "14748180312178446792"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/brave-search/Dockerfile",
+        "hash": "9071547505004294243"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/postgres/index.ts",
+        "hash": "7263947054940376778"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/everything/sse.ts",
+        "hash": "14387759300637563883"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/__init__.py",
+        "hash": "8557131702979384622"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/redis/src/index.ts",
+        "hash": "17293892603567731809"
+      },
+      {
+        "file": "yt_pipeline_output/audio/020-Every NBA GOAT Explained In 32 Minutes.mp4",
+        "hash": "5671241033371815923"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/fetch/src/mcp_server_fetch/__init__.py",
+        "hash": "17382850744387885024"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/everart/README.md",
+        "hash": "1628224815543069763"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/common/version.ts",
+        "hash": "7650065912515911964"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/fetch/src/mcp_server_fetch/server.py",
+        "hash": "3512602082211609489"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/git-howto.html",
+        "hash": "6853584418033782858"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/git/.python-version",
+        "hash": "15650782136117618141"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/fetch/LICENSE",
+        "hash": "1331429765760204383"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/operations/search.ts",
+        "hash": "10460602664764815099"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sentry/pyproject.toml",
+        "hash": "12042022380397808055"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/common/types.ts",
+        "hash": "6875294734815676699"
+      },
+      {
+        "file": "memory-bank/activeContext.md",
+        "hash": "9619294549895304509"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/google-maps/README.md",
+        "hash": "3582431375460495489"
+      },
+      {
+        "file": "MCP/browser-use/pyproject.toml",
+        "hash": "12916526066530967164"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/slack/index.ts",
+        "hash": "7926813693673431918"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/redis/Dockerfile",
+        "hash": "15346327657641846886"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sentry/Dockerfile",
+        "hash": "2255928803176547568"
+      },
+      {
+        "file": "memory-bank/projectbrief.md",
+        "hash": "5011064626582038594"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/gdrive/README.md",
+        "hash": "17333349924195915833"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/time/pyproject.toml",
+        "hash": "13591332242491343530"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/bin/ffmpeg.exe",
+        "hash": "9850304340856559452"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/time/src/mcp_server_time/server.py",
+        "hash": "3267662047522977512"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sentry/.python-version",
+        "hash": "15650782136117618141"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/redis/README.md",
+        "hash": "3228688456896468304"
+      },
+      {
+        "file": "MCP/sequentialthinking/Dockerfile",
+        "hash": "13802836079826036039"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/filesystem/package.json",
+        "hash": "4320144769191514427"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/common/utils.ts",
+        "hash": "14083313527600447115"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sentry/src/mcp_server_sentry/__main__.py",
+        "hash": "13454299770458714306"
+      },
+      {
+        "file": "plan",
+        "hash": "14981664339904602488"
+      },
+      {
+        "file": "yt_pipeline_output/audio/002-I Put Giannis & LeBron In the 70's To See If They'd Survive.mp4",
+        "hash": "1680521957968752796"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/git/src/mcp_server_git/server.py",
+        "hash": "1604002321942642668"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/operations/commits.ts",
+        "hash": "11629089698422021048"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffprobe.html",
+        "hash": "11539095523552049977"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/SECURITY.md",
+        "hash": "9037650814945157775"
+      },
+      {
+        "file": "yt_pipeline_output/audio/019-Optimus Alpha： Did Anthropic Just Secretly Drop Opus 3.7？ (FREE).mp4",
+        "hash": "13810511533586095823"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/libavfilter.html",
+        "hash": "13800791134893311795"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/filesystem/README.md",
+        "hash": "8842775764868543916"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffmpeg-protocols.html",
+        "hash": "4288199314723897938"
+      },
+      {
+        "file": "requirements.txt",
+        "hash": "6717344633119796244"
+      },
+      {
+        "file": ".nx/nxw.js",
+        "hash": "11301648124127104610"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/postgres/README.md",
+        "hash": "17632105661012593890"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sqlite/pyproject.toml",
+        "hash": "5110300919370742633"
+      },
+      {
+        "file": "yt_pipeline_output/audio/021-Vince Staples x Alchemist - Untitled EP.mp4",
+        "hash": "9353069591754025246"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/operations/files.ts",
+        "hash": "14312103322343088935"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/README.md",
+        "hash": "15436454223786243252"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/tsconfig.json",
+        "hash": "3994252324102726545"
+      },
+      {
+        "file": "yt_pipeline_output/audio/006-Every MAJOR NBA FIGHT Explained In 26 Minutes.mp4",
+        "hash": "8414541084613118824"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/redis/package.json",
+        "hash": "7483836243139061668"
+      },
+      {
+        "file": "yt_pipeline_output/audio/005-Every Banned Thing in the NBA Explained in 25 Minutes.mp4",
+        "hash": "5458480904745152975"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/controller/__init__.py",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/libavcodec.html",
+        "hash": "6508338922946867557"
+      },
+      {
+        "file": "tests/test_workflow.py",
+        "hash": "14485321861825084027"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/.github/workflows/typescript.yml",
+        "hash": "14521394158629488412"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg.zip",
+        "hash": "12522564823160130773"
+      },
+      {
+        "file": "MCP/browser-use/.python-version",
+        "hash": "14879863621776397444"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/gdrive/Dockerfile",
+        "hash": "4188249538847785888"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/gitlab/schemas.ts",
+        "hash": "12328580502958423750"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/agent/custom_views.py",
+        "hash": "6874475319721350683"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/__main__.py",
+        "hash": "8557131702979384622"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/filesystem/Dockerfile",
+        "hash": "2602085242478718697"
+      },
+      {
+        "file": "memory-bank/progress.md",
+        "hash": "2210044157335811547"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/brave-search/README.md",
+        "hash": "202783607533335265"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sqlite/src/mcp_server_sqlite/__init__.py",
+        "hash": "12831984183054227224"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/default.css",
+        "hash": "7273344629453774305"
+      },
+      {
+        "file": "MCP/browser-use/assets/web-ui.png",
+        "hash": "17608248888420968666"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/libswresample.html",
+        "hash": "15647413755206892181"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sentry/uv.lock",
+        "hash": "5528945495301566577"
+      },
+      {
+        "file": "MCP/browser-use/README.md",
+        "hash": "1174624065429494226"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/agent/custom_message_manager.py",
+        "hash": "9824550781149525348"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/utils/agent_state.py",
+        "hash": "2053222888470507078"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/package-lock.json",
+        "hash": "6414959543853643487"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/operations/pulls.ts",
+        "hash": "6553519607422333890"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sqlite/.python-version",
+        "hash": "15650782136117618141"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/.github/pull_request_template.md",
+        "hash": "3574705017929480652"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/nut.html",
+        "hash": "11985932237944562775"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/git/src/mcp_server_git/__main__.py",
+        "hash": "12206677868871160404"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/google-maps/index.ts",
+        "hash": "14784584932649794180"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/.gitignore",
+        "hash": "6686874847301261412"
+      },
+      {
+        "file": "MCP/browser-use/.gitignore",
+        "hash": "1077721380564650688"
+      },
+      {
+        "file": "yt_pipeline_output/audio/012-Google CAN'T STOP COOKING： FREE AI AGENTS SDK JUST DROPPED.mp4",
+        "hash": "60827058018674497"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/agent/custom_prompts.py",
+        "hash": "16447223476270411657"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sequentialthinking/README.md",
+        "hash": "7634938413303275119"
+      },
+      {
+        "file": "memory-bank/transcription-workflow/activeContext.md",
+        "hash": "13561888304316100599"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/git/src/mcp_server_git/__init__.py",
+        "hash": "11278423432853702832"
+      },
+      {
+        "file": "MCP/browser-use/.env.example",
+        "hash": "10557113972657821615"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/git/pyproject.toml",
+        "hash": "3802627348573782293"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/slack/README.md",
+        "hash": "14590555671249384908"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/filesystem/index.ts",
+        "hash": "13507132867459723771"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/gdrive/replace_open.sh",
+        "hash": "9585613391995889214"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/google-maps/tsconfig.json",
+        "hash": "14748180312178446792"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/everything/Dockerfile",
+        "hash": "3662960970997640996"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffmpeg-scaler.html",
+        "hash": "7196154678728335325"
+      },
+      {
+        "file": "yt_pipeline_output/audio/016-Google Agentspace JUST WON the AI Game....mp4",
+        "hash": "3228607092791825421"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/utils/__init__.py",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/git/tests/test_server.py",
+        "hash": "11959928812568978206"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/scripts/release.py",
+        "hash": "5272004856069613357"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/mailing-list-faq.html",
+        "hash": "15929170831339814259"
+      },
+      {
+        "file": "README.md",
+        "hash": "5026170134843509042"
+      },
+      {
+        "file": "yt_pipeline_output/audio/001-Gemini 2.5 Pro for YouTube Analysis.mp4",
+        "hash": "13620787580789391629"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/puppeteer/Dockerfile",
+        "hash": "13034597917116901893"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffmpeg-resampler.html",
+        "hash": "10548564999196053440"
+      },
+      {
+        "file": "MCP/browser-use/LICENSE",
+        "hash": "66461579925558618"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/slack/tsconfig.json",
+        "hash": "3994252324102726545"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/run_agents.py",
+        "hash": "15217794327718827010"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/README.txt",
+        "hash": "11964737316941622318"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/style.min.css",
+        "hash": "73681517983731179"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffmpeg-bitstream-filters.html",
+        "hash": "16999274412181640309"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffmpeg-codecs.html",
+        "hash": "18116974902567020899"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/memory/README.md",
+        "hash": "5055855831385203822"
+      },
+      {
+        "file": "src/main.py",
+        "hash": "11519875717050302484"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/.github/workflows/python.yml",
+        "hash": "4311557908737154657"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/browser/__init__.py",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/postgres/Dockerfile",
+        "hash": "9884578068030483357"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/sequentialthinking/tsconfig.json",
+        "hash": "6564947716650043416"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/everything/index.ts",
+        "hash": "12032617511242722279"
+      },
+      {
+        "file": "yt_pipeline_output/audio/015-Google Launches an Agent SDK - Agent Development Kit.mp4",
+        "hash": "505130341277296266"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/presets/libvpx-1080p.ffpreset",
+        "hash": "9545911071243279262"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/fetch/README.md",
+        "hash": "1636781794176266224"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/operations/repository.ts",
+        "hash": "6445934781521606338"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/github/operations/branches.ts",
+        "hash": "11201731651981860453"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/.github/workflows/release.yml",
+        "hash": "10246290958334991027"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/ffprobe-all.html",
+        "hash": "17755908193204293308"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/time/Dockerfile",
+        "hash": "4483010574719145118"
+      },
+      {
+        "file": "memory-bank/transcription-workflow/projectbrief.md",
+        "hash": "15263452691438439530"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/fetch/src/mcp_server_fetch/__main__.py",
+        "hash": "12860404165298338965"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/bootstrap.min.css",
+        "hash": "13991479094036328150"
+      },
+      {
+        "file": "src/database_manager.py",
+        "hash": "15533288127118793411"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/gitlab/tsconfig.json",
+        "hash": "3994252324102726545"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/agent/custom_system_prompt.md",
+        "hash": "8173260714697386322"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/gdrive/package.json",
+        "hash": "2169764904835768395"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/bin/ffplay.exe",
+        "hash": "4953634070795879171"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "12990309872111536764"
+      },
+      {
+        "file": "MCP/sequentialthinking/src/sequentialthinking/Dockerfile",
+        "hash": "5513909594333937269"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/aws-kb-retrieval-server/tsconfig.json",
+        "hash": "5997059294620771755"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/gitlab/Dockerfile",
+        "hash": "15171475963017660088"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/everything/README.md",
+        "hash": "13204533880295353316"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/memory/Dockerfile",
+        "hash": "15613184770261697994"
+      },
+      {
+        "file": "MCP/sequentialthinking/src/sequentialthinking/index.ts",
+        "hash": "7093237881053521591"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/everything/everything.ts",
+        "hash": "7383529616186939936"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/aws-kb-retrieval-server/Dockerfile",
+        "hash": "7927726415902046863"
+      },
+      {
+        "file": "memory-bank/systemPatterns.md",
+        "hash": "18006404502036939673"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/README.md",
+        "hash": "998652199749221111"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/presets/libvpx-1080p50_60.ffpreset",
+        "hash": "17511618950764540783"
+      },
+      {
+        "file": "MCP/sequentialthinking/src/sequentialthinking/README.md",
+        "hash": "7634938413303275119"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/fate.html",
+        "hash": "16891255041810057121"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/git/LICENSE",
+        "hash": "1331429765760204383"
+      },
+      {
+        "file": "yt_pipeline_output/audio/017-Every NBA VILLAIN Explained in 33 Minutes.mp4",
+        "hash": "11823017533967347669"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/doc/libavutil.html",
+        "hash": "14701208299022014362"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/brave-search/index.ts",
+        "hash": "4861528092477676743"
+      },
+      {
+        "file": "MCP/sequentialthinking-tmp/src/google-maps/Dockerfile",
+        "hash": "8791633257232771441"
+      },
+      {
+        "file": "yt_pipeline_output/ffmpeg/ffmpeg-7.1.1-essentials_build/presets/libvpx-720p.ffpreset",
+        "hash": "1150959875713197799"
+      },
+      {
+        "file": "MCP/browser-use/src/mcp_server_browser_use/utils/utils.py",
+        "hash": "7195325816560424885"
+      },
+      {
+        "file": "transcription_workflow.py",
+        "hash": "4198512281262573436"
+      }
+    ],
+    "projectFileMap": {}
+  }
+}

@@ -1,0 +1,71 @@
+
+<coding_guidelines>
+- My project's programming language is python
+- Use early returns when possible
+- Always add documentation when creating new functions and classes
+</coding_guidelines>
+
+
+<openai-best-practices>
+- Use the latest API version for optimal performance and features
+- Implement proper error handling and retries for API requests
+- Use streaming responses for large text generation tasks
+- Cache API responses where appropriate to reduce costs and improve performance
+- Respect rate limits and implement backoff strategies
+</openai-best-practices>
+
+<spacy-best-practices>
+- Use the appropriate language model for your task (e.g., en_core_web_sm)
+- Leverage spaCy's built-in pipelines for efficient processing
+- Implement custom components for task-specific processing
+- Use spaCy's built-in visualization tools for debugging and analysis
+- Keep your spaCy models up to date for the best performance
+</spacy-best-practices>
+
+<ffmpeg-python-best-practices>
+- Use appropriate codecs and formats for your audio processing needs
+- Implement error handling for ffmpeg operations
+- Optimize ffmpeg commands for performance and resource usage
+- Use ffmpeg's built-in filters for audio manipulation when possible
+- Consider using multiprocessing for parallel audio processing tasks
+</ffmpeg-python-best-practices>
+
+<pydub-best-practices>
+- Use pydub's high-level API for simple audio operations
+- Implement proper error handling for audio file operations
+- Optimize audio processing by using appropriate segment sizes
+- Consider using pydub's effects for basic audio enhancements
+- Use pydub in conjunction with ffmpeg for more advanced audio processing
+</pydub-best-practices>
+
+<requests-best-practices>
+- Use session objects for improved performance with multiple requests
+- Implement proper error handling and status code checking
+- Use timeouts to prevent hanging requests
+- Consider using streaming for large responses
+- Implement proper SSL verification and authentication
+</requests-best-practices>
+
+<pytest-best-practices>
+- Write clear and descriptive test names and docstrings
+- Use fixtures for setup and teardown of test resources
+- Implement proper mocking with pytest-mock for isolating dependencies
+- Use parameterized tests for testing multiple scenarios efficiently
+- Implement proper test coverage and reporting
+</pytest-best-practices>
+
+<speechbrain-best-practices>
+- Use pre-trained models when possible for faster development
+- Implement proper data preprocessing for optimal model performance
+- Use SpeechBrain's built-in evaluation tools for model assessment
+- Consider fine-tuning models on domain-specific data for better results
+- Keep up to date with the latest SpeechBrain releases and features
+</speechbrain-best-practices>
+
+<pyannote-audio-best-practices>
+- Use the appropriate diarization model for your specific use case
+- Implement proper audio preprocessing for optimal diarization results
+- Consider using pyannote.audio's built-in visualization tools for analysis
+- Implement error handling for diarization failures
+- Keep pyannote.audio up to date for the latest features and improvements
+</pyannote-audio-best-practices>

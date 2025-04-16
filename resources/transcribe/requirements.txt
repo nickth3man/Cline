@@ -1,0 +1,11 @@
+faster-whisper
+psutil
+pytubefix
+pandas
+fastapi
+spacy
+numba
+openai
+pydub
+ruff
+tqdm

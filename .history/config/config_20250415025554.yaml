@@ -1,0 +1,12 @@
+# Default models used if API fetch fails or as user preference
+# Find model IDs at https://openrouter.ai/models
+defaults:
+  transcription_model: "openai/whisper-large-v3"  # Fixed for all transcription
+  sentence_splitter: "spacy"                      # Fixed for all sentence splitting
+  # LLM models for correction and summarization are user-selectable from all OpenRouter LLMs (live-fetched)
+
+# Settings for fetching models from OpenRouter API
+api_fetch:
+  enabled: true # Set to false to disable dynamic fetching entirely
+  cache_file: ".openrouter_models_cache.json" # Cache file location (relative to project root)
+  cache_duration_hours: 24 # How long to use cache before re-fetching (e.g., 24 hours)

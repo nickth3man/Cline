@@ -1,0 +1,304 @@
+#!/usr/bin/env python3
+"""
+YouTube Playlist Processing Pipeline CLI
+
+This script provides command-line functionality for the YouTube processing workflow,
+including downloading videos, transcribing audio, and managing the database.
+"""
+import os
+import sys
+import argparse
+import logging
+import shutil
+from typing import List, Optional
+from pathlib import Path
+
+# Add src directory to Python path
+src_path = os.path.join(os.path.dirname(__file__), 'src')
+if src_path not in sys.path:
+    sys.path.insert(0, src_path)
+
+# Import project modules
+from utils.database_manager import DatabaseManager, VideoDetails, VideoPaths, DEFAULT_DB_NAME
+from utils import model_manager
+from transcription.transcription_workflow import (
+    download_and_extract_audio, process_downloaded_audio, 
+    print_video_table, print_video_details
+)
+from dotenv import load_dotenv
+
+# Load environment variables and configure logging
+load_dotenv()
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(module)s.%(funcName)s - %(message)s'
+)
+
+def main() -> int:
+    """Main entry point for the CLI application."""
+    parser = argparse.ArgumentParser(
+        description="YouTube Playlist Download & Processing Pipeline with DB Management"
+    )
+    
+    # --- Pipeline Execution Arguments ---
+    pipeline_group = parser.add_argument_group('Pipeline Execution')
+    pipeline_group.add_argument("--playlist_url", type=str, 
+                               help="YouTube playlist URL to process (required for pipeline execution)")
+    pipeline_group.add_argument("--work_dir", type=str, default="yt_pipeline_output", 
+                               help="Base working directory for all outputs")
+    pipeline_group.add_argument("--transcription_model", type=str, default=None, 
+                               help="Transcription model (e.g., openai/whisper-large-v3). Overrides config default.")
+    pipeline_group.add_argument("--correction_model", type=str, default=None, 
+                               help="LLM model for transcript correction (e.g., anthropic/claude-3-haiku-20240307). Overrides config default.")
+    pipeline_group.add_argument("--db_name", type=str, default=DEFAULT_DB_NAME, 
+                               help="Name of the SQLite database file within the work directory")
+    pipeline_group.add_argument("--no-api-fetch", action="store_true", 
+                               help="Disable fetching model list from OpenRouter API (uses cache/defaults)")
+
+    # --- Database Management Arguments ---
+    manage_group = parser.add_argument_group('Database Management')
+    manage_group.add_argument("--status", action="store_true", 
+                             help="Display status summary of all videos in the database")
+    manage_group.add_argument("--list-errors", action="store_true",
+                             help="List videos with an error status")
+    manage_group.add_argument("--view", type=str, metavar="VIDEO_ID",
+                             help="Show detailed information for a specific video ID")
+    manage_group.add_argument("--retry", type=str, metavar="VIDEO_ID|all-errors",
+                             help="Mark a specific video ID or all videos with errors for reprocessing")
+    manage_group.add_argument("--delete", type=str, metavar="VIDEO_ID",
+                             help="Delete a video record from the database (prompts for file deletion)")
+
+    # --- Export Arguments ---
+    export_group = parser.add_argument_group('Data Export')
+    export_group.add_argument("--export", type=str, metavar="FILEPATH",
+                             help="Export data to the specified file (.csv or .jsonl)")
+    export_group.add_argument("--ids", type=str, nargs='+', metavar="VIDEO_ID",
+                             help="Filter export by specific video IDs (space-separated)")
+    export_group.add_argument("--status_filter", type=str, 
+                             help="Filter export by processing status pattern (e.g., 'processed', 'error_%')")
+
+    args = parser.parse_args()
+
+    # --- Argument Validation ---
+    is_pipeline_run = bool(args.playlist_url)
+    is_manage_run = any([args.status, args.list_errors, args.view, args.retry, args.delete])
+    is_export_run = bool(args.export) 
+
+    if is_pipeline_run and (is_manage_run or is_export_run):
+        parser.error("Cannot combine pipeline execution arguments (--playlist_url) with database management or export arguments.")
+    if is_manage_run and is_export_run:
+        parser.error("Cannot combine database management arguments with export arguments.")
+    if not is_pipeline_run and not is_manage_run and not is_export_run:
+        parser.error("No action specified. Provide --playlist_url, a management command (e.g., --status), or an export command (--export).")
+    if args.retry and args.retry.lower() != "all-errors" and not args.retry:
+        parser.error("--retry requires a specific VIDEO_ID or the keyword 'all-errors'.")
+
+    # --- Load Configuration & Models ---
+    config = model_manager.load_config()
+    if args.no_api_fetch:
+        config['api_fetch']['enabled'] = False
+        logging.info("OpenRouter API fetching disabled via --no-api-fetch flag.")
+
+    available_models = model_manager.get_available_models(config)
+
+    # Determine final models to use (CLI > Config Default)
+    final_transcription_model = args.transcription_model or config.get('defaults', {}).get(
+        'transcription_model', model_manager.DEFAULT_CONFIG['defaults']['transcription_model'])
+    # Enforce only openai/gpt-4.1-mini for correction and summarization
+    final_correction_model = "openai/gpt-4.1-mini"
+    final_summarization_model = "openai/gpt-4.1-mini"
+    
+    logging.info(f"Using Transcription Model: {final_transcription_model}")
+    logging.info(f"Using Correction Model: {final_correction_model}")
+    logging.info(f"Using Summarization Model: {final_summarization_model}")
+
+    # --- Initialize Database Manager ---
+    # Ensure output directory exists
+    os.makedirs(args.work_dir, exist_ok=True)
+    
+    db_path = os.path.join(args.work_dir, args.db_name)
+    try:
+        manager = DatabaseManager(db_path)
+    except Exception as e:
+        logging.critical(f"Failed to initialize Database Manager for path {db_path}: {e}", exc_info=True)
+        return 1
+
+    # --- Execute Management Commands ---
+    management_action_taken = False
+    if args.status:
+        management_action_taken = True
+        print("Fetching video status summary...")
+        try:
+            all_videos = manager.get_all_video_details()
+            print_video_table(all_videos)
+        except Exception as e:
+            logging.error(f"Failed to retrieve video status: {e}", exc_info=True)
+
+    elif args.list_errors:
+        management_action_taken = True
+        print("Fetching videos with error status...")
+        try:
+            error_videos = manager.get_videos_by_status('error_%')
+            if error_videos:
+                print_video_table(error_videos)
+            else:
+                print("No videos found with an error status.")
+        except Exception as e:
+            logging.error(f"Failed to retrieve error videos: {e}", exc_info=True)
+
+    elif args.view:
+        management_action_taken = True
+        video_id_to_view = args.view
+        print(f"Fetching details for video ID: {video_id_to_view}")
+        try:
+            video_details = manager.get_video_details(video_id_to_view)
+            video_paths = manager.get_video_paths(video_id_to_view)
+            print_video_details(video_details, video_paths)
+        except Exception as e:
+            logging.error(f"Failed to retrieve details for video {video_id_to_view}: {e}", exc_info=True)
+
+    elif args.retry:
+        management_action_taken = True
+        target = args.retry
+        videos_to_retry = []
+        
+        if target.lower() == "all-errors":
+            print("Finding all videos with error statuses to mark for retry...")
+            try:
+                videos_to_retry = manager.get_videos_by_status('error_%')
+                if not videos_to_retry:
+                    print("No videos found with error status.")
+            except Exception as e:
+                logging.error(f"Failed to retrieve error videos for retry: {e}", exc_info=True)
+        else:
+            print(f"Finding video ID {target} to mark for retry...")
+            try:
+                details = manager.get_video_details(target)
+                if details:
+                    videos_to_retry.append(details)
+                else:
+                    print(f"Video ID {target} not found in the database.")
+            except Exception as e:
+                logging.error(f"Failed to retrieve video {target} for retry: {e}", exc_info=True)
+
+        if videos_to_retry:
+            print(f"Marking {len(videos_to_retry)} video(s) for reprocessing...")
+            count = 0
+            for video in videos_to_retry:
+                # Determine appropriate retry status
+                retry_status = 'downloaded'  # Default: assume audio exists, retry processing
+                paths = manager.get_video_paths(video.video_id)
+                if not paths or not paths.audio_wav_path or not os.path.exists(os.path.join(args.work_dir, paths.audio_wav_path)):
+                    retry_status = 'pending_download'  # Audio missing, needs full redownload
+
+                if manager.update_video_status(video.video_id, retry_status):
+                    # Safely handle potentially None title
+                    title_display = (video.title[:30] + '...') if video.title and len(video.title) > 30 else (video.title or 'N/A')
+                    print(f" - Marked {video.video_id} ({title_display}) with status '{retry_status}'")
+                    count += 1
+                else:
+                    print(f" - Failed to update status for {video.video_id}")
+            print(f"Successfully marked {count} video(s) for retry.")
+
+    elif args.delete:
+        management_action_taken = True
+        video_id_to_delete = args.delete
+        print(f"Attempting to delete database record for video ID: {video_id_to_delete}")
+        
+        try:
+            paths = manager.get_video_paths(video_id_to_delete)
+            if not paths:
+                print(f"Video ID {video_id_to_delete} not found in the database.")
+            else:
+                confirm_files = input(f"Database record found for '{paths.video_id}'. Also delete associated files in folder '{paths.folder_path}'? (y/N): ")
+                deleted_paths = manager.delete_video(video_id_to_delete)
+
+                if deleted_paths:
+                    print(f"Successfully deleted database record for {video_id_to_delete}.")
+                    if confirm_files.lower() == 'y':
+                        print("Attempting to delete associated files...")
+                        folder_to_delete = os.path.join(args.work_dir, deleted_paths.folder_path) if deleted_paths.folder_path else None
+                        
+                        if folder_to_delete and os.path.isdir(folder_to_delete):
+                            try:
+                                shutil.rmtree(folder_to_delete)
+                                print(f"Successfully deleted folder: {folder_to_delete}")
+                            except OSError as e:
+                                print(f"Error deleting folder {folder_to_delete}: {e}")
+                                logging.error(f"Error deleting folder {folder_to_delete}: {e}", exc_info=True)
+                        else:
+                            print(f"Folder path '{folder_to_delete}' not found or invalid, cannot delete files.")
+                else:
+                    print(f"Failed to delete database record for {video_id_to_delete}.")
+        except Exception as e:
+            logging.error(f"Failed to delete video {video_id_to_delete}: {e}", exc_info=True)
+
+    # --- Execute Export Command ---
+    export_action_taken = False
+    if args.export:
+        export_action_taken = True
+        filepath = args.export
+        file_ext = os.path.splitext(filepath)[1].lower()
+        video_ids = args.ids
+        status_filter = args.status_filter
+        
+        logging.info(f"Starting export process to: {filepath}")
+        if video_ids:
+            logging.info(f"Filtering by Video IDs: {video_ids}")
+        if status_filter:
+            logging.info(f"Filtering by Status: {status_filter}")
+
+        try:
+            rows_exported = 0
+            if file_ext == ".csv":
+                rows_exported = manager.export_to_csv(filepath, video_ids=video_ids, status=status_filter)
+                print(f"Successfully exported {rows_exported} records to CSV: {filepath}")
+            elif file_ext == ".jsonl" or file_ext == ".json":
+                if file_ext == ".json":
+                    logging.warning("Exporting as JSON Lines (.jsonl) format to the specified .json file for streaming efficiency.")
+                rows_exported = manager.export_to_json(filepath, video_ids=video_ids, status=status_filter)
+                print(f"Successfully exported {rows_exported} records to JSON Lines: {filepath}")
+            else:
+                print(f"Error: Unsupported export file format '{file_ext}'. Please use '.csv' or '.jsonl'.")
+                logging.error(f"Unsupported export file format: {file_ext}")
+                return 1
+        except Exception as e:
+            print(f"Error during export: {e}")
+            logging.error(f"Failed to export data: {e}", exc_info=True)
+            return 1
+
+    # --- Execute Pipeline ---
+    if is_pipeline_run and not management_action_taken and not export_action_taken:
+        logging.info(f"Starting pipeline for playlist: {args.playlist_url}")
+        logging.info(f"Output will be organized in subfolders under: {args.work_dir}")
+        logging.info(f"Database file: {db_path}")
+
+        # Ensure work_dir exists
+        os.makedirs(args.work_dir, exist_ok=True)
+
+        try:
+            # Step 1: Download videos, metadata, and extract audio (updates DB via manager)
+            download_and_extract_audio(args.playlist_url, args.work_dir, manager)
+
+            # Step 2: Process the extracted audio (transcribe, correct) (updates DB via manager)
+            process_downloaded_audio(
+                args.work_dir, 
+                final_correction_model, 
+                manager, 
+                transcription_model=final_transcription_model
+            )
+
+            logging.info("Pipeline processing steps complete. Check the output directory and database for results.")
+        except Exception as e:
+            logging.critical(f"Pipeline failed with critical error: {e}", exc_info=True)
+            return 1
+
+    elif not is_pipeline_run and not management_action_taken and not export_action_taken:
+        # This case should be caught by argument validation, but as a fallback:
+        logging.warning("No pipeline URL provided and no management or export action specified.")
+        parser.print_help()
+
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
