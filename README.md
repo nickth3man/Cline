@@ -58,6 +58,49 @@ run_pipeline.bat <playlist_url> [options]
 
 *(Note: While the script name remains, its internal calls may have been updated to reflect the new structure, likely invoking functionality within `src/presentation` or `src/core`.)*
 
+## Core Workflows (:PipelinePattern)
+
+The application implements a **:PipelinePattern** for processing videos. Several core workflows can be triggered via the GUI, each consisting of a sequence of steps.
+
+*Note:* There is an observed **:InconsistentWorkflow** between how the individual GUI buttons trigger specific stages and how the `run_pipeline.bat` script orchestrates the full sequence. This discrepancy is being tracked as part of addressing **:OutdatedDocumentation** and potential **:MaintainabilityIssues**.
+
+### 1. Download + Transcribe Workflow
+
+*   **Trigger:** "Download & Transcribe" button in the GUI.
+*   **Inputs:** YouTube Playlist URL or individual Video ID.
+*   **Processing Steps:**
+    1.  **Download:** Fetches the video(s) from YouTube.
+    2.  **Extract Audio:** Separates the audio track from the video.
+    3.  **Transcribe:** Processes the audio using WhisperX to generate a raw transcript with speaker diarization.
+    4.  **Correct/Format:** (Optional, may depend on specific GUI handler implementation) Applies LLM-based corrections for punctuation and formatting.
+*   **Outputs (`output/` directory):**
+    *   `[video_id].mp4` (:DataRepresentation: Video File) - Original downloaded video.
+    *   `[video_id].wav` (:DataRepresentation: Audio File) - Extracted audio.
+    *   `[video_id]_raw_transcript.json` (:DataRepresentation: JSON) - Raw WhisperX output.
+    *   `[video_id]_corrected_transcript.txt` (:DataRepresentation: Text) - Formatted/corrected transcript (if correction step runs).
+
+### 2. Summarize Workflow
+
+*   **Trigger:** "Summarize" button in the GUI (typically enabled after transcription).
+*   **Inputs:** Requires a processed transcript file (e.g., `[video_id]_corrected_transcript.txt`).
+*   **Processing Steps:**
+    1.  **Load Transcript:** Reads the specified transcript file.
+    2.  **Summarize:** Sends the transcript content to the configured LLM (via OpenRouter) to generate a summary.
+*   **Outputs (`output/` directory):**
+    *   `[video_id]_summary.txt` (:DataRepresentation: Text) - Generated summary.
+
+### 3. Full Pipeline Workflow
+
+*   **Trigger:** "Run Full Pipeline" button in the GUI or executing `run_pipeline.bat`.
+*   **Inputs:** YouTube Playlist URL or individual Video ID.
+*   **Processing Steps:** Executes the entire sequence:
+    1.  Download
+    2.  Extract Audio
+    3.  Transcribe
+    4.  Correct/Format Transcript
+    5.  Summarize
+*   **Outputs (`output/` directory):** Generates all files listed in the "Download + Transcribe" and "Summarize" workflows.
+
 ## Requirements
 
 - Python 3.9+ (:Technology choice)
