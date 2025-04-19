@@ -5,13 +5,15 @@ import re
 import yt_dlp
 import datetime
 import time
+import argparse # Import argparse
 from tqdm import tqdm
 from src.utils.workflow_logic import (
     transcribe_audio,
-    diarize_speakers,
+    # Removed perform_diarization_and_assignment as it's now part of transcribe_audio
     correct_transcript,
+    summarize_transcript, # Import summarize_transcript
 )
-from src.utils import workflow_logic
+from src.utils import workflow_logic # Keep this import for other potential workflow_logic functions
 from src.youtube_direct import YouTubeDirectHandler
 
 # Configure logging with timestamps and levels
@@ -62,6 +64,7 @@ def run_pipeline(
     output_base_dir: str,
     correction_models: list,
     summarization_model: str,
+    video_ids: list = None, # Add video_ids parameter with default None
 ):
     # Create output directory if it doesn't exist
     os.makedirs(output_base_dir, exist_ok=True)
@@ -162,9 +165,26 @@ def run_pipeline(
 
         stats["total_videos"] = len(video_list)
         logging.info(f"Found {len(video_list)} videos in playlist.")
+
+        # Filter video_list if video_ids are provided
+        if video_ids:
+            original_video_list = video_list # Keep original for total count
+            video_list = [video for video in video_list if video.get("id") in video_ids]
+            logging.info(f"Filtered to {len(video_list)} videos based on provided IDs.")
+            stats["total_videos"] = len(video_list) # Update total videos to process
+
     except Exception as e:
         logging.error(f"Failed to fetch playlist info: {e}", exc_info=True)
         raise RuntimeError(f"Playlist fetching failed: {e}")
+
+    # Add total duration to stats if available from yt-dlp info
+    # Note: 'info' might not be defined if the direct handler succeeded.
+    # We should only access 'info' if the fallback to yt-dlp occurred.
+    # A more robust approach would be to get duration from each video entry if available.
+    # For now, we'll leave this as is, acknowledging it might not always set total_duration_seconds.
+    # if 'duration' in info:
+    #     stats['total_duration_seconds'] = info['duration']
+
 
     # Create a progress bar for the overall process
     pbar = tqdm(total=len(video_list), desc="Processing videos", unit="video")
@@ -173,7 +193,10 @@ def run_pipeline(
     for index, video in enumerate(video_list):
         start_time = time.time()
         video_title = video.get("title", f"video_{index}")
+        video_id = video.get("id", f"unknown_id_{index}") # Get video ID
         video_url = video.get("url") or video.get("webpage_url") or video.get("id")
+
+        print(f"VIDEO_STATUS:{video_id}:Starting processing for video: {video_title}") # Structured status
 
         # Update progress bar description
         pbar.set_description(f"Processing: {video_title[:30]}...")
@@ -184,9 +207,9 @@ def run_pipeline(
             or "unavailable" in video_title.lower()
             or "deleted" in video_title.lower()
         ):
-            logging.warning(
-                f"Skipping video {index+1}/{len(video_list)} ('{video_title}') due to missing URL or unavailable status."
-            )
+            warning_msg = f"Skipping video {index+1}/{len(video_list)} ('{video_title}') due to missing URL or unavailable status."
+            logging.warning(warning_msg)
+            print(f"VIDEO_STATUS:{video_id}:{warning_msg}") # Structured status for skipped
             stats["skipped_videos"] += 1
             pbar.update(1)
             continue
@@ -235,7 +258,9 @@ def run_pipeline(
         audio_downloaded = False
         for attempt in range(3):  # Try up to 3 times with different methods
             try:
-                logging.info(f"Downloading audio (attempt {attempt+1}/3): {video_url}")
+                status_msg = f"Downloading audio (attempt {attempt+1}/3): {video_url}"
+                logging.info(status_msg)
+                print(f"VIDEO_STATUS:{video_id}:Status: {status_msg}") # Structured status
 
                 # Create attempt-specific path to avoid file locking issues
                 attempt_audio_path = wav_audio_path.replace(
@@ -304,18 +329,20 @@ def run_pipeline(
                         shutil.copy2(attempt_audio_path, wav_audio_path)
                         os.remove(attempt_audio_path)  # Clean up the attempt file
                         audio_downloaded = True
-                        logging.info(
-                            f"Successfully downloaded audio on attempt {attempt+1}"
-                        )
+                        status_msg = f"Successfully downloaded audio on attempt {attempt+1}"
+                        logging.info(status_msg)
+                        print(f"VIDEO_STATUS:{video_id}:Status: {status_msg}") # Structured status
                         break
                     except Exception as e:
-                        logging.warning(
-                            f"Could not rename file {attempt_audio_path} to {wav_audio_path}: {e}"
-                        )
+                        warning_msg = f"Could not rename file {attempt_audio_path} to {wav_audio_path}: {e}"
+                        logging.warning(warning_msg)
+                        print(f"VIDEO_ERROR:{video_id}:Error: {warning_msg}") # Structured error
                         # Use the attempt file directly if we can't rename
                         wav_audio_path = attempt_audio_path
                         audio_downloaded = True
-                        logging.info(f"Using attempt file directly: {wav_audio_path}")
+                        status_msg = f"Using attempt file directly: {wav_audio_path}"
+                        logging.info(status_msg)
+                        print(f"VIDEO_STATUS:{video_id}:Status: {status_msg}") # Structured status
                         break
 
                 # Sometimes yt-dlp saves with a different extension (.m4a, .webm etc.) before converting
@@ -336,36 +363,37 @@ def run_pipeline(
 
                 if potential_files:
                     actual_audio_file = os.path.join(video_folder, potential_files[0])
-                    logging.warning(
-                        f"Expected WAV not found, using alternative: {actual_audio_file}"
-                    )
+                    warning_msg = f"Expected WAV not found, using alternative: {actual_audio_file}"
+                    logging.warning(warning_msg)
+                    print(f"VIDEO_STATUS:{video_id}:Status: {warning_msg}") # Structured status (using status for non-critical issue)
                     wav_audio_path = actual_audio_file
                     audio_downloaded = True
                     break
                 else:
-                    logging.warning(
-                        f"No audio files found on attempt {attempt+1}, trying next method..."
-                    )
+                    warning_msg = f"No audio files found on attempt {attempt+1}, trying next method..."
+                    logging.warning(warning_msg)
+                    print(f"VIDEO_STATUS:{video_id}:Status: {warning_msg}") # Structured status (using status for non-critical issue)
                     # Give the file system time to release any locks before next attempt
                     time.sleep(2)
 
             except Exception as e:
-                logging.error(
-                    f"Audio download failed on attempt {attempt+1}: {e}", exc_info=True
-                )
+                error_msg = f"Audio download failed on attempt {attempt+1}: {e}"
+                logging.error(error_msg, exc_info=True)
+                print(f"VIDEO_ERROR:{video_id}:Error: {error_msg}") # Structured error
                 if attempt < 2:  # Only log warning if we have more attempts left
                     logging.info(f"Retrying with different download method...")
                     # Give the file system time to release any locks before next attempt
                     time.sleep(2)
                 else:
-                    error_msg = f"All audio download attempts failed for {video_title}"
-                    logging.error(error_msg)
-                    video_stats["error"] = error_msg
+                    final_error_msg = f"All audio download attempts failed for {video_title}"
+                    logging.error(final_error_msg)
+                    print(f"VIDEO_ERROR:{video_id}:Error: {final_error_msg}") # Structured error
+                    video_stats["error"] = final_error_msg
 
         if not audio_downloaded:
-            logging.error(
-                f"Failed to download audio after multiple attempts for {video_title}"
-            )
+            error_msg = f"Failed to download audio after multiple attempts for {video_title}"
+            logging.error(error_msg)
+            print(f"VIDEO_ERROR:{video_id}:Error: {error_msg}") # Structured error
             video_stats["end_time"] = datetime.datetime.now().isoformat()
             video_stats["duration_seconds"] = time.time() - start_time
             stats_path = os.path.join(video_folder, f"{sanitized_title}_stats.json")
@@ -376,21 +404,40 @@ def run_pipeline(
             continue  # Skip to next video
 
         logging.info(f"Downloaded and converted audio to {wav_audio_path}")
+        print(f"VIDEO_STATUS:{video_id}:Status: Audio downloaded and converted to {wav_audio_path}") # Structured status
         video_stats["steps_completed"].append("audio_download")
 
-        # Transcribe audio
+        # Transcribe audio (includes diarization now)
+        print(f"VIDEO_STATUS:{video_id}:Starting transcription and diarization") # Structured status
         try:
-            raw_transcript = transcribe_audio(wav_audio_path)
+            # transcribe_audio now returns the result with segments and speaker info
+            transcription_diarization_result = transcribe_audio(video_id, wav_audio_path)
+            segments_with_speakers = transcription_diarization_result.get("segments", [])
+            raw_transcript_text = transcription_diarization_result.get("text", "") # Use the full text from the result
+
             raw_transcript_path = os.path.join(
                 video_folder, f"{sanitized_title}_raw_transcript.txt"
             )
             with open(raw_transcript_path, "w", encoding="utf-8") as f:
-                f.write(raw_transcript)
+                f.write(raw_transcript_text) # Write the extracted text
             logging.info(f"Raw transcript saved: {raw_transcript_path}")
-            video_stats["steps_completed"].append("transcription")
+            print(f"VIDEO_STATUS:{video_id}:Status: Raw transcript saved to {raw_transcript_path}") # Structured status
+            video_stats["steps_completed"].append("transcription_and_diarization")
+
+            # Save the diarization result (segments with speakers) to a JSON file
+            diarization_path = os.path.join(
+                video_folder, f"{sanitized_title}_diarization.json"
+            )
+            with open(diarization_path, "w", encoding="utf-8") as f:
+                json.dump(segments_with_speakers, f, indent=2)
+            logging.info(f"Diarization results saved: {diarization_path}")
+            print(f"VIDEO_STATUS:{video_id}:Status: Diarization results saved to {diarization_path}") # Structured status
+
+
         except Exception as e:
-            error_msg = f"Transcription failed for {video_title}: {e}"
+            error_msg = f"Transcription or diarization failed for {video_title}: {e}"
             logging.error(error_msg, exc_info=True)
+            print(f"VIDEO_ERROR:{video_id}:Error: {error_msg}") # Structured error
             video_stats["error"] = error_msg
             stats["failed_videos"] += 1
 
@@ -404,37 +451,28 @@ def run_pipeline(
             pbar.update(1)
             continue  # Skip to next video
 
-        # Diarize speakers (Pseudo-diarization via LLM)
-        diarization_result = []
-        diarization_path = os.path.join(
-            video_folder, f"{sanitized_title}_diarization.json"
-        )
-        try:
-            diarization_result = diarize_speakers(wav_audio_path, raw_transcript)
-            with open(diarization_path, "w", encoding="utf-8") as f:
-                json.dump(diarization_result, f, indent=2)
-            logging.info(f"Diarization results saved: {diarization_path}")
-            video_stats["steps_completed"].append("diarization")
-        except Exception as e:
-            error_msg = f"Diarization failed for {video_title}: {e}"
-            logging.error(error_msg, exc_info=True)
-            video_stats["error"] = error_msg
-            # Create a minimal diarization result to allow continuing
-            diarization_result = [
-                {"speaker": "Speaker", "start": 0, "end": 0, "text": ""}
-            ]
-            with open(diarization_path, "w", encoding="utf-8") as f:
-                json.dump(diarization_result, f, indent=2)
-            logging.warning(
-                f"Created minimal diarization result to continue pipeline: {diarization_path}"
-            )
+        # Delete audio file after successful transcription/diarization
+        if os.path.exists(wav_audio_path):
+            try:
+                os.remove(wav_audio_path)
+                print(f"VIDEO_STATUS:{video_id}:Status: Deleted audio file: {wav_audio_path}") # Structured status
+            except Exception as e:
+                warning_msg = f"Failed to delete audio file {wav_audio_path}: {e}"
+                logging.warning(warning_msg)
+                print(f"VIDEO_ERROR:{video_id}:Error: {warning_msg}") # Structured error (using error for failed cleanup)
+
 
         # Correct transcript using selected models
         corrected_transcript = ""
+        print(f"VIDEO_STATUS:{video_id}:Starting transcript correction") # Structured status
         for model in correction_models:
             try:
+                status_msg = f"Attempting correction with model: {model}"
+                logging.info(status_msg)
+                print(f"VIDEO_STATUS:{video_id}:Status: {status_msg}") # Structured status
+                # Pass the segments with speaker info to correct_transcript
                 corrected_transcript = correct_transcript(
-                    raw_transcript, diarization_result, correction_model=model
+                    segments_with_speakers, correction_model=model # Use segments_with_speakers
                 )
                 corrected_path = os.path.join(
                     video_folder,
@@ -442,180 +480,166 @@ def run_pipeline(
                 )
                 with open(corrected_path, "w", encoding="utf-8") as f:
                     f.write(corrected_transcript)
-                logging.info(f"Corrected transcript ({model}) saved: {corrected_path}")
-                video_stats["steps_completed"].append("correction")
-                break  # Stop after first successful correction
+                logging.info(f"Corrected transcript saved: {corrected_path}")
+                print(f"VIDEO_STATUS:{video_id}:Status: Corrected transcript saved to {corrected_path}") # Structured status
+                video_stats["steps_completed"].append(f"correction_{model}")
             except Exception as e:
                 error_msg = f"Transcript correction failed with model {model} for {video_title}: {e}"
                 logging.error(error_msg, exc_info=True)
-                video_stats["error"] = error_msg
-                stats["failed_videos"] += 1
-
-                # Save video stats even if failed
-                video_stats["end_time"] = datetime.datetime.now().isoformat()
-                video_stats["duration_seconds"] = time.time() - start_time
-                stats_path = os.path.join(video_folder, f"{sanitized_title}_stats.json")
-                with open(stats_path, "w", encoding="utf-8") as f:
-                    json.dump(video_stats, f, indent=2)
-
-                pbar.update(1)
-                continue  # Skip to next video
-        if not corrected_transcript:
-            logging.warning(
-                f"Transcript correction failed for all models for {video_title}. Using raw transcript."
-            )
-            corrected_transcript = raw_transcript  # Fallback
+                print(f"VIDEO_ERROR:{video_id}:Error: {error_msg}") # Structured error
+                video_stats["error"] = video_stats.get("error", "") + f"Correction ({model}) failed: {e}\n" # Append error
 
         # Summarize transcript
-        try:
-            summary = workflow_logic.summarize_transcript(
-                corrected_transcript, summarization_model
-            )
-            summary_path = os.path.join(
-                video_folder,
-                f"{sanitized_title}_summary_{summarization_model.replace('/', '_')}.txt",
-            )
-            with open(summary_path, "w", encoding="utf-8") as f:
-                f.write(summary)
-            logging.info(f"Summary saved: {summary_path}")
-            video_stats["steps_completed"].append("summarization")
-        except Exception as e:
-            error_msg = f"Summarization failed for {video_title}: {e}"
-            logging.error(error_msg, exc_info=True)
-            video_stats["error"] = error_msg
-            stats["failed_videos"] += 1
+        summary = ""
+        if corrected_transcript and summarization_model: # Only summarize if correction was successful and a model is specified
+            print(f"VIDEO_STATUS:{video_id}:Starting transcript summarization") # Structured status
+            try:
+                status_msg = f"Attempting summarization with model: {summarization_model}"
+                logging.info(status_msg)
+                print(f"VIDEO_STATUS:{video_id}:Status: {status_msg}") # Structured status
+                summary = summarize_transcript(corrected_transcript, summarization_model)
+                summary_path = os.path.join(
+                    video_folder,
+                    f"{sanitized_title}_summary_{summarization_model.replace('/', '_')}.txt",
+                )
+                with open(summary_path, "w", encoding="utf-8") as f:
+                    f.write(summary)
+                logging.info(f"Summary saved: {summary_path}")
+                print(f"VIDEO_STATUS:{video_id}:Status: Summary saved to {summary_path}") # Structured status
+                video_stats["steps_completed"].append("summarization")
+            except Exception as e:
+                error_msg = f"Transcript summarization failed with model {summarization_model} for {video_title}: {e}"
+                logging.error(error_msg, exc_info=True)
+                print(f"VIDEO_ERROR:{video_id}:Error: {error_msg}") # Structured error
+                video_stats["error"] = video_stats.get("error", "") + f"Summarization ({summarization_model}) failed: {e}\n" # Append error
+        elif not corrected_transcript:
+             warning_msg = "Skipping summarization as transcript correction failed."
+             logging.warning(warning_msg)
+             print(f"VIDEO_STATUS:{video_id}:Status: {warning_msg}") # Structured status
+        elif not summarization_model:
+             warning_msg = "Skipping summarization as no summarization model was specified."
+             logging.warning(warning_msg)
+             print(f"VIDEO_STATUS:{video_id}:Status: {warning_msg}") # Structured status
 
-            # Save video stats even if failed
-            video_stats["end_time"] = datetime.datetime.now().isoformat()
-            video_stats["duration_seconds"] = time.time() - start_time
-            stats_path = os.path.join(video_folder, f"{sanitized_title}_stats.json")
-            with open(stats_path, "w", encoding="utf-8") as f:
-                json.dump(video_stats, f, indent=2)
-
-            pbar.update(1)
-            continue  # Skip to next video
 
         # Generate HTML reader
-        try:
-            html_path = os.path.join(
-                video_folder, f"{sanitized_title}_transcript_reader.html"
-            )
-            generate_html_reader(corrected_transcript, html_path)
-            logging.info(f"HTML transcript reader saved: {html_path}")
-            video_stats["steps_completed"].append("html_reader")
-        except Exception as e:
-            error_msg = f"HTML reader generation failed for {video_title}: {e}"
-            logging.error(error_msg, exc_info=True)
-            video_stats["error"] = error_msg
-            stats["failed_videos"] += 1
+        if corrected_transcript: # Only generate HTML if correction was successful
+            print(f"VIDEO_STATUS:{video_id}:Generating HTML reader") # Structured status
+            html_path = os.path.join(video_folder, f"{sanitized_title}_transcript_reader.html")
+            try:
+                # Pass the corrected transcript to the HTML generator
+                workflow_logic.generate_html_reader(corrected_transcript, html_path)
+                logging.info(f"HTML reader generated: {html_path}")
+                print(f"VIDEO_STATUS:{video_id}:Status: HTML reader generated at {html_path}") # Structured status
+                video_stats["steps_completed"].append("html_reader")
+            except Exception as e:
+                error_msg = f"Failed to generate HTML reader for {video_title}: {e}"
+                logging.error(error_msg, exc_info=True)
+                print(f"VIDEO_ERROR:{video_id}:Error: {error_msg}") # Structured error
+                video_stats["error"] = video_stats.get("error", "") + f"HTML reader generation failed: {e}\n" # Append error
+        else:
+            warning_msg = "Skipping HTML reader generation as transcript correction failed."
+            logging.warning(warning_msg)
+            print(f"VIDEO_STATUS:{video_id}:Status: {warning_msg}") # Structured status
 
-            # Save video stats even if failed
-            video_stats["end_time"] = datetime.datetime.now().isoformat()
-            video_stats["duration_seconds"] = time.time() - start_time
-            stats_path = os.path.join(video_folder, f"{sanitized_title}_stats.json")
-            with open(stats_path, "w", encoding="utf-8") as f:
-                json.dump(video_stats, f, indent=2)
 
-            pbar.update(1)
-            continue  # Skip to next video
-
-        # Save metadata
-        try:
-            metadata = {
-                "title": video_title,
-                "url": video_url,
-                "playlist_url": playlist_url,
-                "processed_at": datetime.datetime.now().isoformat(),
-                "correction_models_attempted": correction_models,
-                "correction_model_used": (
-                    model
-                    if corrected_transcript != raw_transcript
-                    else "None (Fallback to raw)"
-                ),
-                "summarization_model": summarization_model,
-                "files": {
-                    "audio": os.path.basename(wav_audio_path),
-                    "raw_transcript": os.path.basename(raw_transcript_path),
-                    "diarization": os.path.basename(diarization_path),
-                    "corrected_transcript": (
-                        os.path.basename(corrected_path)
-                        if corrected_transcript != raw_transcript
-                        else None
-                    ),
-                    "summary": (
-                        os.path.basename(summary_path)
-                        if "summary_path" in locals()
-                        else None
-                    ),
-                    "html_reader": (
-                        os.path.basename(html_path) if "html_path" in locals() else None
-                    ),
-                },
-            }
-            metadata_path = os.path.join(
-                video_folder, f"{sanitized_title}_metadata.json"
-            )
-            with open(metadata_path, "w", encoding="utf-8") as f:
-                json.dump(metadata, f, indent=2)
-            logging.info(f"Metadata saved: {metadata_path}")
-            video_stats["steps_completed"].append("metadata")
-        except Exception as e:
-            error_msg = f"Metadata saving failed for {video_title}: {e}"
-            logging.error(error_msg, exc_info=True)
-            video_stats["error"] = error_msg
-            stats["failed_videos"] += 1
-
-            # Save video stats even if failed
-            video_stats["end_time"] = datetime.datetime.now().isoformat()
-            video_stats["duration_seconds"] = time.time() - start_time
-            stats_path = os.path.join(video_folder, f"{sanitized_title}_stats.json")
-            with open(stats_path, "w", encoding="utf-8") as f:
-                json.dump(video_stats, f, indent=2)
-
-            pbar.update(1)
-            continue  # Skip to next video
-
-        # Save video stats
-        video_stats["success"] = True
+        # Finalize video stats
         video_stats["end_time"] = datetime.datetime.now().isoformat()
         video_stats["duration_seconds"] = time.time() - start_time
+        video_stats["success"] = video_stats.get("error") is None # Mark as success if no errors occurred
+
         stats_path = os.path.join(video_folder, f"{sanitized_title}_stats.json")
         with open(stats_path, "w", encoding="utf-8") as f:
             json.dump(video_stats, f, indent=2)
+        logging.info(f"Video stats saved: {stats_path}")
+        print(f"VIDEO_STATUS:{video_id}:Status: Video stats saved to {stats_path}") # Structured status
 
-        # Update overall stats
-        stats["processed_videos"] += 1
-        stats["total_duration_seconds"] += video_stats["duration_seconds"]
+        if video_stats["success"]:
+            stats["processed_videos"] += 1
+            print(f"VIDEO_STATUS:{video_id}:Completed processing for video: {video_title}") # Structured status
+        else:
+            stats["failed_videos"] += 1
+            print(f"VIDEO_STATUS:{video_id}:Failed processing for video: {video_title}") # Structured status
 
-        # Update progress bar
-        pbar.update(1)
 
-    # Close progress bar
-    pbar.close()
+        pbar.update(1) # Update progress bar
+
+    pbar.close() # Close progress bar
+
+    # Finalize overall stats
+    stats["end_time"] = datetime.datetime.now().isoformat()
+    logging.info("Pipeline execution finished.")
+    print("PIPELINE_STATUS:Completed") # Structured status for pipeline completion
 
     # Save overall stats
-    stats["end_time"] = datetime.datetime.now().isoformat()
-    stats_path = os.path.join(output_base_dir, "pipeline_stats.json")
-    with open(stats_path, "w", encoding="utf-8") as f:
+    stats_summary_path = os.path.join(output_base_dir, "pipeline_stats_summary.json")
+    with open(stats_summary_path, "w", encoding="utf-8") as f:
         json.dump(stats, f, indent=2)
+    logging.info(f"Overall pipeline stats saved: {stats_summary_path}")
+    print(f"PIPELINE_STATUS:Overall stats saved to {stats_summary_path}") # Structured status
 
-    logging.info(
-        f"Pipeline finished. Processed {stats['processed_videos']}/{stats['total_videos']} videos in {stats['total_duration_seconds']:.2f} seconds."
-    )
-    logging.info(
-        f"Skipped: {stats['skipped_videos']}, Failed: {stats['failed_videos']}"
-    )
-    logging.info(f"Overall stats saved to: {stats_path}")
+    # Print summary of results
+    print("\n==================== Pipeline Summary ====================")
+    print(f"Total videos: {stats['total_videos']}")
+    print(f"Processed successfully: {stats['processed_videos']}")
+    print(f"Skipped: {stats['skipped_videos']}")
+    print(f"Failed: {stats['failed_videos']}")
+    print("==========================================================")
+
+    if stats["failed_videos"] > 0:
+        logging.error(f"Pipeline finished with {stats['failed_videos']} failed videos.")
+        # Optionally, list failed videos
+        # for video in video_list:
+        #     video_folder = os.path.join(output_base_dir, sanitize_filename(video.get("title", "")))
+        #     stats_path = os.path.join(video_folder, f"{sanitize_filename(video.get('title', ''))}_stats.json")
+        #     if os.path.exists(stats_path):
+        #         with open(stats_path, 'r', encoding='utf-8') as f:
+        #             video_stats = json.load(f)
+        #         if not video_stats.get("success", True):
+        #             print(f"Failed video: {video.get('title', 'Unknown Title')} ({video.get('id', 'Unknown ID')}) - Error: {video_stats.get('error', 'No error details')}")
+
+    else:
+        logging.info("Pipeline finished successfully with no failed videos.")
 
 
 if __name__ == "__main__":
-    import sys
+    parser = argparse.ArgumentParser(description="Run the YouTube transcription and processing pipeline.")
+    parser.add_argument(
+        "playlist_url", help="The URL of the YouTube playlist to process."
+    )
+    parser.add_argument(
+        "--output_base_dir",
+        default="output",
+        help="The base directory to save the output files.",
+    )
+    parser.add_argument(
+        "--correction_models",
+        nargs="+", # Allows multiple model names
+        default=["google/gemini-2.5-flash-preview"], # Default correction model
+        help="List of LLM models to use for transcript correction (via OpenRouter).",
+    )
+    parser.add_argument(
+        "--summarization_model",
+        default="google/gemini-2.5-flash-preview", # Default summarization model
+        help="The LLM model to use for transcript summarization (via OpenRouter).",
+    )
+    parser.add_argument(
+        "--video_ids",
+        nargs="+", # Allows multiple video IDs
+        default=None, # Default to None to process all videos
+        help="Optional: List of specific video IDs to process from the playlist.",
+    )
 
-    if len(sys.argv) < 2:
-        print("Usage: python run_full_pipeline.py <playlist_url>")
-        sys.exit(1)
-    playlist_url = sys.argv[1]
-    output_dir = "output"
-    correction_models = ["openai/gpt-4.1-mini", "anthropic/claude-3-haiku-20240307"]
-    summarization_model = "openai/gpt-4.1-mini"
-    run_pipeline(playlist_url, output_dir, correction_models, summarization_model)
+    args = parser.parse_args()
+
+    try:
+        run_pipeline(
+            playlist_url=args.playlist_url,
+            output_base_dir=args.output_base_dir,
+            correction_models=args.correction_models,
+            summarization_model=args.summarization_model,
+            video_ids=args.video_ids, # Pass the video_ids argument
+        )
+    except Exception as e:
+        logging.error(f"An unhandled error occurred during pipeline execution: {e}", exc_info=True)
+        print(f"PIPELINE_ERROR:An unhandled error occurred: {e}") # Structured error
