@@ -1,4 +1,3 @@
 @echo off
 echo Running pipeline with correct Python interpreter...
-cd "%~dp0"
-"C:\Users\nicki\Documents\Cline\venv\Scripts\python.exe" python_wrapper.py pipeline %*
+"C:\Users\nicki\Documents\Cline\venv\Scripts\python.exe" -m src.run_full_pipeline %*

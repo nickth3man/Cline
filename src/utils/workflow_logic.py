@@ -263,18 +263,36 @@ def transcribe_audio(video_id: str, audio_path: str) -> Dict[str, Any]:
 
         # Transcribe audio
         logging.info(f"VIDEO_STATUS:{video_id}:Running WhisperX transcription...")
-        result = whisperx_model.transcribe(audio, batch_size=batch_size)
-        logging.info(f"VIDEO_STATUS:{video_id}:WhisperX transcription complete.")
+        # Added more specific error handling around the transcribe call
+        try:
+            result = whisperx_model.transcribe(audio, batch_size=batch_size)
+            logging.info(f"VIDEO_STATUS:{video_id}:WhisperX transcription complete.")
+        except Exception as transcribe_error:
+            error_message = f"WhisperX transcription failed for {video_id}: {transcribe_error}"
+            logging.error(f"VIDEO_ERROR:{video_id}:{error_message}", exc_info=True)
+            raise RuntimeError(error_message) from transcribe_error
+
 
         # Align transcription
         logging.info(f"VIDEO_STATUS:{video_id}:Running WhisperX alignment...")
-        result = whisperx.align(result["segments"], whisperx_align_model, metadata, audio, device, return_char_alignments=False)
-        logging.info(f"VIDEO_STATUS:{video_id}:WhisperX alignment complete.")
+        try:
+            result = whisperx.align(result["segments"], whisperx_align_model, metadata, audio, device, return_char_alignments=False)
+            logging.info(f"VIDEO_STATUS:{video_id}:WhisperX alignment complete.")
+        except Exception as align_error:
+            error_message = f"WhisperX alignment failed for {video_id}: {align_error}"
+            logging.error(f"VIDEO_ERROR:{video_id}:{error_message}", exc_info=True)
+            raise RuntimeError(error_message) from align_error
 
         # Perform diarization using pyannote.audio pipeline
         logging.info(f"VIDEO_STATUS:{video_id}:Running Pyannote.audio diarization...")
-        diarization_result = diarization_pipeline(audio_path)
-        logging.info(f"VIDEO_STATUS:{video_id}:Pyannote.audio diarization complete.")
+        try:
+            diarization_result = diarization_pipeline(audio_path)
+            logging.info(f"VIDEO_STATUS:{video_id}:Pyannote.audio diarization complete.")
+        except Exception as diarization_error:
+            error_message = f"Pyannote.audio diarization failed for {video_id}: {diarization_error}"
+            logging.error(f"VIDEO_ERROR:{video_id}:{error_message}", exc_info=True)
+            raise RuntimeError(error_message) from diarization_error
+
 
         # Assign speakers to segments
         logging.info(f"VIDEO_STATUS:{video_id}:Assigning speakers to segments...")
@@ -312,7 +330,9 @@ def transcribe_audio(video_id: str, audio_path: str) -> Dict[str, Any]:
         }
 
     except Exception as e:
-        error_message = f"Transcription or diarization failed for {video_id}: {e}"
+        # This catch block will now primarily catch errors from assign_speakers_to_segments
+        # or any unexpected errors not caught by the more specific blocks above.
+        error_message = f"Transcription/Diarization post-processing failed for {video_id}: {e}"
         logging.error(f"VIDEO_ERROR:{video_id}:{error_message}", exc_info=True)
         raise RuntimeError(error_message) from e
     finally:
@@ -379,7 +399,7 @@ def correct_transcript(
 
     Raises:
         ConnectionError: If the OpenAI client is not initialized.
-        RuntimeError: If the LLM API call fails.
+        RuntimeError: If the LLM API call fails or returns empty content.
     """
     logging.info(
         f"Starting transcript correction using model '{correction_model}' via OpenRouter..."
@@ -392,7 +412,14 @@ def correct_transcript(
         end_time = segment.get("end", "N/A")
         speaker = segment.get("speaker", "Unknown Speaker")
         text = segment.get("text", "")
-        formatted_input += f"[{start_time:.2f}-{end_time:.2f}] {speaker}: {text}\n"
+        # Ensure timestamps are formatted correctly if they are numbers
+        try:
+            start_time_formatted = f"{float(start_time):.2f}" if isinstance(start_time, (int, float)) else str(start_time)
+            end_time_formatted = f"{float(end_time):.2f}" if isinstance(end_time, (int, float)) else str(end_time)
+            formatted_input += f"[{start_time_formatted}-{end_time_formatted}] {speaker}: {text}\n"
+        except (ValueError, TypeError):
+             formatted_input += f"[{start_time}-{end_time}] {speaker}: {text}\n" # Fallback if timestamps aren't numeric
+
 
     try:
         # Use the chat completions endpoint for text correction
@@ -408,6 +435,12 @@ def correct_transcript(
             temperature=0.1,  # Keep corrections focused and not creative
         )
         corrected_transcript = response.choices[0].message.content.strip()
+        if not corrected_transcript:
+            warning_message = "Transcript correction API call succeeded but returned empty content."
+            logging.warning(warning_message)
+            # Raise an error to indicate failure due to empty content
+            raise RuntimeError(warning_message)
+
         logging.info("Transcript correction successful.")
         return corrected_transcript
     except Exception as e:
@@ -429,7 +462,7 @@ def summarize_transcript(transcript: str, summarization_model: str) -> str:
 
     Raises:
         ConnectionError: If the OpenAI client is not initialized.
-        RuntimeError: If the LLM API call fails.
+        RuntimeError: If the LLM API call fails or returns empty content.
     """
     if not client:
         raise ConnectionError(
@@ -454,6 +487,12 @@ def summarize_transcript(transcript: str, summarization_model: str) -> str:
             temperature=0.3,  # Allow some creativity for summarization
         )
         summary = response.choices[0].message.content.strip()
+        if not summary:
+            warning_message = "Transcript summarization API call succeeded but returned empty content."
+            logging.warning(warning_message)
+            # Raise an error to indicate failure due to empty content
+            raise RuntimeError(warning_message)
+
         logging.info("Transcript summarization successful.")
         return summary
     except Exception as e:
@@ -494,14 +533,66 @@ def generate_html_reader(corrected_transcript: str, output_path: str):
 """
 
     try:
-        # Ensure the output directory exists
-        output_dir = os.path.dirname(output_path)
-        if output_dir and not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(html_content)
-        logging.info(f"HTML reader generated successfully at {output_path}")
+        logging.info(f"HTML reader saved successfully to {output_path}")
     except Exception as e:
-        logging.error(f"Error generating HTML reader: {e}", exc_info=True)
-        raise RuntimeError(f"Failed to generate HTML reader: {e}")
+        logging.error(f"Error generating or saving HTML reader to {output_path}: {e}", exc_info=True)
+        # Decide if this should raise an error or just log a warning
+        # For now, logging a warning seems sufficient as it's a presentation layer issue
+        pass
+
+
+def save_transcript_to_file(transcript_data: Union[str, List[Dict[str, Any]]], output_path: str, file_format: str = "txt"):
+    """
+    Saves transcript data to a file in the specified format.
+
+    Args:
+        transcript_data: The transcript data (either raw text or list of segments).
+        output_path: The path where the file will be saved.
+        file_format: The desired file format ('txt' or 'json').
+    """
+    logging.info(f"Saving transcript data to {output_path} in format {file_format}...")
+
+    try:
+        if file_format == "txt":
+            if isinstance(transcript_data, str):
+                with open(output_path, "w", encoding="utf-8") as f:
+                    f.write(transcript_data)
+            elif isinstance(transcript_data, list):
+                # If segments are provided for TXT, format them with speaker/timestamps
+                formatted_text = ""
+                for segment in transcript_data:
+                    start_time = segment.get("start", "N/A")
+                    end_time = segment.get("end", "N/A")
+                    speaker = segment.get("speaker", "Unknown Speaker")
+                    text = segment.get("text", "")
+                    try:
+                        start_time_formatted = f"{float(start_time):.2f}" if isinstance(start_time, (int, float)) else str(start_time)
+                        end_time_formatted = f"{float(end_time):.2f}" if isinstance(end_time, (int, float)) else str(end_time)
+                        formatted_text += f"[{start_time_formatted}-{end_time_formatted}] {speaker}: {text}\n"
+                    except (ValueError, TypeError):
+                        formatted_text += f"[{start_time}-{end_time}] {speaker}: {text}\n" # Fallback if timestamps aren't numeric
+
+                with open(output_path, "w", encoding="utf-8") as f:
+                    f.write(formatted_text)
+            else:
+                raise TypeError(f"Unsupported data type for txt format: {type(transcript_data)}")
+
+        elif file_format == "json":
+            if isinstance(transcript_data, list):
+                with open(output_path, "w", encoding="utf-8") as f:
+                    json.dump(transcript_data, f, indent=2)
+            else:
+                 # If raw text is provided for JSON, wrap it in a simple structure
+                 logging.warning(f"Saving raw text as JSON for {output_path}. Wrapping in 'text' key.")
+                 with open(output_path, "w", encoding="utf-8") as f:
+                    json.dump({"text": transcript_data}, f, indent=2)
+
+        else:
+            raise ValueError(f"Unsupported file format: {file_format}. Supported formats are 'txt' and 'json'.")
+
+        logging.info(f"Transcript data saved successfully to {output_path}")
+
+    except Exception as e:
+        logging.error(f"Error saving transcript data to {output_path}: {e}", exc_info=True)

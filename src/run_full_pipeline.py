@@ -487,7 +487,8 @@ def run_pipeline(
                 error_msg = f"Transcript correction failed with model {model} for {video_title}: {e}"
                 logging.error(error_msg, exc_info=True)
                 print(f"VIDEO_ERROR:{video_id}:Error: {error_msg}") # Structured error
-                video_stats["error"] = video_stats.get("error", "") + f"Correction ({model}) failed: {e}\n" # Append error
+                current_error = video_stats.get("error") or ""
+                video_stats["error"] = current_error + f"Correction ({model}) failed: {e}\n" # Append error
 
         # Summarize transcript
         summary = ""
@@ -511,7 +512,8 @@ def run_pipeline(
                 error_msg = f"Transcript summarization failed with model {summarization_model} for {video_title}: {e}"
                 logging.error(error_msg, exc_info=True)
                 print(f"VIDEO_ERROR:{video_id}:Error: {error_msg}") # Structured error
-                video_stats["error"] = video_stats.get("error", "") + f"Summarization ({summarization_model}) failed: {e}\n" # Append error
+                current_error = video_stats.get("error") or ""
+                video_stats["error"] = current_error + f"Summarization ({summarization_model}) failed: {e}\n" # Append error
         elif not corrected_transcript:
              warning_msg = "Skipping summarization as transcript correction failed."
              logging.warning(warning_msg)
@@ -536,7 +538,8 @@ def run_pipeline(
                 error_msg = f"Failed to generate HTML reader for {video_title}: {e}"
                 logging.error(error_msg, exc_info=True)
                 print(f"VIDEO_ERROR:{video_id}:Error: {error_msg}") # Structured error
-                video_stats["error"] = video_stats.get("error", "") + f"HTML reader generation failed: {e}\n" # Append error
+                current_error = video_stats.get("error") or ""
+                video_stats["error"] = current_error + f"HTML reader generation failed: {e}\n" # Append error
         else:
             warning_msg = "Skipping HTML reader generation as transcript correction failed."
             logging.warning(warning_msg)
